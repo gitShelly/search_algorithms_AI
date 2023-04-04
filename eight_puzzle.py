@@ -1,11 +1,9 @@
-#code work nhi kr rha h toh koi nayi dhund ke mujhe bhi bhej dena... yeh sir se provided wala h
-
-import sys 
 import copy
-q = []
-s = [[1, 2, 3], [8, 0, 4], [7, 6, 5]]
-g = [[2, 8, 1], [0, 4, 3], [7, 6, 5]]
 
+q = []
+visited = []
+s = [[2, 0, 3], [1, 8, 4], [7, 6, 5]]
+g = [[1, 2, 3], [8, 0, 4], [7, 6, 5]]
 
 def compare(s, g):
     if s == g:
@@ -15,15 +13,18 @@ def compare(s, g):
 
 
 def find_pos(s):
-    for i in range(len(s)):
-        for j in range(len(s[0])):
+
+    for i in range(3):
+        for j in range(3):
             if s[i][j] == 0:
                 return ([i, j])
 
 
 def up(s, pos):
+
     i = pos[0]
     j = pos[1]
+
     if i > 0:
         temp = copy.deepcopy(s)
         temp[i][j] = temp[i-1][j]
@@ -34,96 +35,133 @@ def up(s, pos):
 
 
 def down(s, pos):
- i = pos[0]
- j = pos[1]
- if i < 2:
-  temp = copy.deepcopy(s)
-  temp[i][j] = temp[i+1][j]
-  temp[i+1][j] = 0
-  return (temp)
- else:
-  return (s)
+
+    i = pos[0]
+    j = pos[1]
+
+    if i < 2:
+        temp = copy.deepcopy(s)
+        temp[i][j] = temp[i+1][j]
+        temp[i+1][j] = 0
+        return (temp)
+    else:
+        return (s)
 
 
 def right(s, pos):
- i = pos[0]
- j = pos[1]
- if j < 2:
-  temp = copy.deepcopy(s)
-  temp[i][j] = temp[i][j+1]
-  temp[i][j+1] = 0
-  return (temp)
- else:
-  return (s)
- 
- 
+
+    i = pos[0]
+    j = pos[1]
+
+    if j < 2:
+        temp = copy.deepcopy(s)
+        temp[i][j] = temp[i][j+1]
+        temp[i][j+1] = 0
+        return (temp)
+    else:
+        return (s)
+
+
 def left(s, pos):
- i = pos[0]
- j = pos[1]
- if j > 0:
-  temp = copy.deepcopy(s)
-  temp[i][j] = temp[i][j-1]
-  temp[i][j-1] = 0
-  return (temp)
- else:
-  return (s)
- 
-def enqueue(s):
- global q
- q = q + [s]
+
+    i = pos[0]
+    j = pos[1]
+
+    if j > 0:
+        temp = copy.deepcopy(s)
+        temp[i][j] = temp[i][j-1]
+        temp[i][j-1] = 0
+        return (temp)
+    else:
+        return (s)
+
+
+def enqueue(s, val):
+    global q
+    q = q + [(val, s)]
+
+
+def heuristic(s, g):
+    d = 0
+    for i in range(3):
+        for j in range(3):
+            if s[i][j] != g[i][j]:
+                d += 1
+    return d
+
 
 def dequeue():
- global q
- # find the state having minimum mis matches with the goal state
- elem = q[0]
- del q[0]
- return (elem)
+
+    global q
+    global visited
+
+    q.sort()
+    visited = visited + [q[0][1]]
+
+    elem = q[0][1]
+    del q[0]
+    return (elem)
+
 
 def search(s, g):
- curr_state = copy.deepcopy(s)
- if s == g:
-   return
- 
- while (1):
-   pos = find_pos(curr_state)
-   new = up(curr_state, pos)
-   if new != curr_state:
-    if new == g:
-     print ('found')
-     return
-   else:
-    enqueue(new)
-  
-   new = down(curr_state, pos)
-   if new != curr_state:
-    if new == g:
-     print('found')
-    return
-   else:
-    enqueue(new)
- 
-   new = right(curr_state, pos)
-   if new != curr_state:
-     if new == g:
-      print('found')
-      return
-   else:
-    enqueue(new)
- 
-   new = left(curr_state, pos)
-   if new != curr_state:
-     if new == g:
-       print('found')
-       return
-   else:
-    enqueue(new)
- 
-   if len(q) > 0:
-    curr_state = dequeue()
-   else:
-    print('not found')
-    return
-  
-pos = find_pos(s)
+
+    curr_state = copy.deepcopy(s)
+    if s == g:
+        return
+
+    global visited
+    while (1):
+
+        pos = find_pos(curr_state)
+        new = up(curr_state, pos)
+
+        if new != curr_state:
+            if new == g:
+                print("found!! The intermediate states are:")
+                print(visited + [g])
+                return
+            else:
+                if new not in visited:
+                    enqueue(new, heuristic(new, g))
+
+        new = down(curr_state, pos)
+
+        if new != curr_state:
+            if new == g:
+                print("found!! The intermediate states are:")
+                print(visited + [g])
+                return
+            else:
+                if new not in visited:
+                    enqueue(new, heuristic(new, g))
+
+        new = right(curr_state, pos)
+
+        if new != curr_state:
+            if new == g:
+                print("found!! The intermediate states are:")
+                print(visited + [g])
+                return
+            else:
+                if new not in visited:
+                    enqueue(new, heuristic(new, g))
+
+        new = left(curr_state, pos)
+
+        if new != curr_state:
+            if new == g:
+                print("found!! The intermediate states are:")
+                print(visited + [g])
+                return
+            else:
+                if new not in visited:
+                    enqueue(new, heuristic(new, g))
+
+        if len(q) > 0:
+            curr_state = dequeue()
+        else:
+            print("not found")
+            return
+
+visited = visited + [s]
 search(s, g)
- 
