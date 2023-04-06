@@ -164,4 +164,6 @@ def search(s, g):
             return
 
 visited = visited + [s]
+pos=find_pos(s)
+print(pos)
 search(s, g)

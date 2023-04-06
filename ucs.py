@@ -1,8 +1,11 @@
-graph = {'a': {'b': 6, 'c': 3},
-         'b': {'c': 1, 'd': 2},
-         'c': {'b': 4, 'd': 8, 'e': 2},
-         'd': {'e': 9},
-         'e': {'d': 7}}
+graph = {'0': {'1': 2, '2': 6},
+    '1': {'3': 5,'0':2},
+    '2': {'3': 8, '0': 6},
+    '3': {'4': 10, '5': 15, '2': 8,'1':5},
+    '4': {'6': 2, '3': 10},
+    '5': {'6': 6, '3': 15},
+    '6': {'4': 2, '5': 6}}
+         
 
 
 def min_and_predecessor(graph, src):
@@ -42,10 +45,29 @@ def UCS(graph, src, dest):
         print('and path is ' + str(path))
 
 
-UCS(graph, 'a', 'd')
+UCS(graph, '0', '6')
 
 # is complete
 # optimal
+
+
+# def min_predecessor(graph,src):
+#     queue=[src]
+#     min_distances={v:float('inf')for v in graph}
+#     min_distances[src]=0
+#     predecessor={}
+    
+#     while queue:
+#         current_node=queue.pop(0)
+#         for neighbor in graph[current_node]:
+#             new_dist=min_distances[current_node] + graph[current_node][neighbor]
+            
+#             if new_dist<min_distances[neighbor]:
+#                 min_distances[neighbor]=min(new_dist,min_distances[neighbor])
+#                 queue.append[neighbor]
+#                 predecessor[neighbor]=current_node
+    
+#     return min_distances,predecessor
 
 
 
